@@ -7,11 +7,11 @@ variable "aws_region" {
 variable "s3_bucket_name" {
   description = "This S3 is Terraform state files."
   type = string
-  default = "s3-tfstate"
+  default = "s3-tfstate-mori"
 }
 
 variable "dynamodb_table_name" {
   description = "This DynamoDB is Terraform state locking."
   type = string
-  default = "dynamodb-tfstate"
+  default = "dynamodb-tfstate-mori"
 }
