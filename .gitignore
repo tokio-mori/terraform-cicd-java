@@ -1,0 +1,23 @@
+# ローカルのTerraform作業ディレクトリ
+.terraform/
+
+# Terraformの状態ファイル（機密情報が含まれる）
+*.tfstate
+*.tfstate.backup
+
+# Terraformのロックファイル
+.terraform.lock.hcl
+
+# VSCodeの設定
+.vscode/
+
+# ログや一時ファイル
+*.log
+*.tmp
+
+# OSごとの不要ファイル
+.DS_Store
+Thumbs.db
+
+# その他の一時ファイル
+*.swp
