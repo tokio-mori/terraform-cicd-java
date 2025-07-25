@@ -2,7 +2,7 @@
 variable "project_name" {
   description = "A unique name for the project."
   type        = string
-  default     = "my-web-app"
+  default     = "mywebapp"
 }
 
 variable "aws_region" {
