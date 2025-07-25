@@ -21,3 +21,6 @@ Thumbs.db
 
 # その他の一時ファイル
 *.swp
+
+# key-pair file
+*.pem
