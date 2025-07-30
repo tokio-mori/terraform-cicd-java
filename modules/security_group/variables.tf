@@ -21,5 +21,5 @@ variable "db_port" {
 variable "ssh_ingress_cidr_blocks" {
   description = "List of CIDR blocks to allow SSH access."
   type        = list(string)
-  default     = ["0.0.0.0/0"] # 本番環境では特定のIPに制限すべき
+  default     = ["0.0.0.0/0"] # 本番環境では特定のIP
 }

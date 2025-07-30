@@ -12,17 +12,15 @@ module "vpc" {
   availability_zones = var.availability_zones
 }
 
-# Security Groupモジュールの呼び出し
 module "security_group" {
   source             = "../../modules/security_group"
   project_name       = var.project_name
   environment        = "dev"
   vpc_id             = module.vpc.vpc_id
-  db_port            = 3306 # MySQLの場合
-  ssh_ingress_cidr_blocks = ["0.0.0.0/0"] # 開発用なので許可範囲を広く (本番では制限)
+  db_port            = 3306 # MySQL
+  ssh_ingress_cidr_blocks = ["0.0.0.0/0"] # 開発用
 }
 
-# EC2モジュールの呼び出し
 module "ec2" {
   source                    = "../../modules/ec2"
   project_name              = var.project_name
@@ -35,7 +33,6 @@ module "ec2" {
   associate_public_ip       = true # パブリックIPを割り当てる
 }
 
-# RDSモジュールの呼び出し
 module "rds" {
   source             = "../../modules/rds"
   project_name       = var.project_name
