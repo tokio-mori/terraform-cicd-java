@@ -1,23 +1,23 @@
 name: Java CI Action
 on:
-    push:
-        branches: [ "main" ]
-    pull_request:
-        branches: [ "main" ]
+  push:
+      branches: [ "main" ]
+  pull_request:
+      branches: [ "main" ]
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-          # 仮想マシン上へチェックアウト
-          - name: Checkout code
-            uses: actions/checkout@v4
-          - name: Setup Java JDK
-            uses: actions/setup-java@v4.7.1
-            with:
-              java-version: '21'
-              distribution: 'temurin'
-              cache: 'gradle'
-          - name: Setup Gradle
-            uses: gradle/actions/setup-gradle@v4
-          - name: Build with Gradle
-            run: ./gradlew build
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 仮想マシン上へチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.7.1
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: ./gradlew build
