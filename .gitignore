@@ -24,3 +24,5 @@ Thumbs.db
 
 # key-pair file
 *.pem
+
+*.infracost
