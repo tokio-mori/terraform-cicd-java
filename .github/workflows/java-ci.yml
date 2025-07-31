@@ -1,13 +1,14 @@
 name: Java CI Action
-on:
-  push:
+
+on: 
+  push: 
       branches: [ "main" ]
-  pull_request:
+  pull_request: 
       branches: [ "main" ]
-jobs:
-  build:
+jobs: 
+  build: 
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       # 仮想マシン上へチェックアウト
       - name: Checkout code
         uses: actions/checkout@v4
