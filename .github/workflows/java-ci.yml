@@ -1,5 +1,4 @@
 name: Java CI Action
-
 on:
     push:
         branches: [ "main" ]
