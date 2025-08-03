@@ -30,10 +30,20 @@ jobs:
             working-directory: ./app
             run: ./gradlew build
 
-          - name: SonarQube Scan
-            uses: SonarSource/sonarqube-scan-action@v5.3.0 # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+          - name: Cache SonarQube packages
+            uses: actions/cache@v4
             with:
-              projectBaseDir: app
-            env: 
-              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+              path: ~/.sonar/cache
+              key: ${{ runner.os }}-sonar
+              restore-keys: ${{ runner.os }}-sonar
+          - name: Cache Gradle packages
+            uses: actions/cache@v4
+            with:
+              path: ~/.gradle/caches
+              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+              restore-keys: ${{ runner.os }}-gradle
+          - name: Build and analyze
+            env:
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            run: ./gradlew build sonar --info
 

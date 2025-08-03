@@ -36,3 +36,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+sonar {
+  properties {
+    property "sonar.projectKey", "tokio-mori_terraform-cicd-java"
+    property "sonar.organization", "tokio-mori"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
