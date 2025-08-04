@@ -26,16 +26,18 @@ jobs:
           - name: Run tests with Gradle
             working-directory: ./app
             run: ./gradlew test
-
-          - name: Build with Gradle
+            
+          - name: Build and analyze
+            env:
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             working-directory: ./app
-            run: ./gradlew build
+            run: ./gradlew build sonar --info
 
           - name: Uplocad build artifact
             uses: actions/upload-artifact@v4
             with: 
               name: my-app-artifact
-              path: app/jar/*.jar
+              path: app/build/libs/*.jar
 
           - name: Cache SonarQube packages
             uses: actions/cache@v4
@@ -49,9 +51,4 @@ jobs:
               path: ~/.gradle/caches
               key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
               restore-keys: ${{ runner.os }}-gradle
-          - name: Build and analyze
-            env:
-              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            working-directory: ./app
-            run: ./gradlew build sonar --info
 
