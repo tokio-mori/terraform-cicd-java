@@ -1,4 +1,4 @@
-name: Java CD Actions
+name: Java CD Action
 
 on:
   workflow_run:
