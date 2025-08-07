@@ -38,9 +38,6 @@ jobs:
             with: 
               name: my-app-artifact
               path: app/build/libs/*.jar
-          
-          - name: Verify JAR file path
-            run: ls -l app/build/libs/
 
           - name: Cache SonarQube packages
             uses: actions/cache@v4
