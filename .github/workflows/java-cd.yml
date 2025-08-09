@@ -33,6 +33,6 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: .app
+          context: ./app
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest
