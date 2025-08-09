@@ -1,3 +1,3 @@
 FROM openjdk:21-jdk-slim
-COPY my-app-artifact/*.jar app.jar
+COPY app/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
