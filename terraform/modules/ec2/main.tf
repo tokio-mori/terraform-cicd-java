@@ -4,6 +4,9 @@ resource "aws_instance" "main" {
   subnet_id = var.subnet_id
   vpc_security_group_ids = [var.security_group_id]
   key_name = var.key_pair_name
+
+  user_data = "${file("userdata.sh")}"
+
   # パブリックサブネットに配置する場合
   associate_public_ip_address = var.associate_public_ip
 
