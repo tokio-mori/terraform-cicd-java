@@ -24,7 +24,7 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name = aws_db_subnet_group.main.name
   skip_final_snapshot  = true # 本番環境ではfalseにすべき
   multi_az             = var.multi_az
-  publicly_accessible  = false # プライベートサブネットに配置するためfalse
+  publicly_accessible  = false
 
   tags = {
     Name        = "${var.project_name}-${var.environment}-db"
