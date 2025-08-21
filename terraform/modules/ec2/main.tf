@@ -5,7 +5,7 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = [var.security_group_id]
   key_name = var.key_pair_name
 
-  user_data = "${file("userdata.sh")}"
+  user_data = file("${path.module}/userdata.sh")
 
   # パブリックサブネットに配置する場合
   associate_public_ip_address = var.associate_public_ip
