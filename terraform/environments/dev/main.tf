@@ -21,6 +21,16 @@ module "security_group" {
   ssh_ingress_cidr_blocks = ["0.0.0.0/0"] # 開発用
 }
 
+module "iam" {
+  source = "../../modules/iam"
+}
+
+module "ecr" {
+  source = "../../modules/ecr"
+  repository_name = "my-java-app"
+  environment = "dev"
+}
+
 module "ec2" {
   source                    = "../../modules/ec2"
   project_name              = var.project_name
@@ -31,6 +41,7 @@ module "ec2" {
   security_group_id         = module.security_group.ec2_security_group_id
   key_pair_name             = "test-keypair"
   associate_public_ip       = true # パブリックIPを割り当てる
+  iam_instance_profile_name = module.iam.instance_profile_name
 }
 
 module "rds" {

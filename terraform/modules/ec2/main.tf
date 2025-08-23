@@ -10,6 +10,8 @@ resource "aws_instance" "main" {
   # パブリックサブネットに配置する場合
   associate_public_ip_address = var.associate_public_ip
 
+  iam_instance_profile = var.iam_instance_profile_name
+
   tags = {
     name = "${var.project_name}-${var.environment}-ec2-instance"
     environment = var.environment

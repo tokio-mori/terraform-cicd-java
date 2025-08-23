@@ -38,3 +38,8 @@ variable "associate_public_ip" {
   type        = bool
   default     = false
 }
+
+variable "iam_instance_profile_name" {
+  description = "IAM instance profile name"
+  type = string
+}
