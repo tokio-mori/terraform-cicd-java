@@ -9,4 +9,6 @@ resource "aws_ecr_repository" "app" {
     name = var.repository_name
     environment = var.environment
   }
+
+  force_delete = true
 }
