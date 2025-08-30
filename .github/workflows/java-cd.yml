@@ -51,14 +51,14 @@ jobs:
             REGISTRY_URL=${{ steps.login-ecr.outputs.registry }}
             IMAGE_NAME=${{ steps.build-image.outputs.image }}
 
-            aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $REGISTRY_URL
-            
-            docker pull $IMAGE_NAME
-            docker stop my-java-app || true
-            docker rm my-java-app || true
+            sudo aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $REGISTRY_URL
 
-            docker run -d -p 8080:8080 --name my-java-app \
+            sudo docker pull $IMAGE_NAME
+            sudo docker stop my-java-app || true
+            sudo docker rm my-java-app || true
+
+            sudo docker run -d -p 8080:8080 --name my-java-app \
               -e SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.RDS_ENDPOINT }}:3306/${{ secrets.RDS_DB_NAME }}" \
               -e SPRING_DATASOURCE_USERNAME="${{ secrets.RDS_USERNAME }}" \
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.RDS_PASSWORD }}" \
-            $IMAGE_NAME
+              $IMAGE_NAME
