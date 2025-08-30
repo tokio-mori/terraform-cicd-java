@@ -3,3 +3,8 @@ set -euxo pipefail
 dnf -y update
 dnf -y install java-21-amazon-corretto
 java -version >> /var/log/java_install.log 2>&1
+
+yum update -y
+yum install -y docker
+service docker start
+usermod -a -G docker ec2-user
