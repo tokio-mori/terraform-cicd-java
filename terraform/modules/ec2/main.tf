@@ -17,3 +17,12 @@ resource "aws_instance" "main" {
     environment = var.environment
   }
 }
+
+resource "aws_eip" "app_server_eip" {
+  domain = "vpc"
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id = aws_instance.main.id
+  allocation_id = aws_eip.app_server_eip.id
+}

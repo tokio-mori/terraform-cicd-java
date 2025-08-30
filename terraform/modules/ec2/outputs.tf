@@ -10,5 +10,5 @@ output "private_ip" {
 
 output "public_ip" {
   description = "The public IP address of the EC2 instance (if associated)."
-  value       = aws_instance.main.public_ip
+  value       = aws_eip.app_server_eip.public_ip
 }

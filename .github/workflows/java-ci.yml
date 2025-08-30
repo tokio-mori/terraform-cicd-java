@@ -1,4 +1,4 @@
-name: Java CI Action
+name: Java CI Action - Build and Test
 on:
   push:
     branches: [ "main" ]
