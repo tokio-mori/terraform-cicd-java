@@ -48,8 +48,12 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
-            docker pull ${{ steps.build-image.outputs.image }}
+            REGISTRY_URL=${{ steps.login-ecr.outputs.registry }}
+            IMAGE_NAME=${{ steps.build-image.outputs.image }}
+
+            aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $REGISTRY_URL
+            
+            docker pull $IMAGE_NAME
             docker stop my-java-app || true
             docker rm my-java-app || true
 
@@ -57,4 +61,4 @@ jobs:
               -e SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.RDS_ENDPOINT }}:3306/${{ secrets.RDS_DB_NAME }}" \
               -e SPRING_DATASOURCE_USERNAME="${{ secrets.RDS_USERNAME }}" \
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.RDS_PASSWORD }}" \
-            ${{ steps.build-image.outputs.image }}
+            $IMAGE_NAME
