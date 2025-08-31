@@ -31,6 +31,13 @@ module "ecr" {
   environment = "dev"
 }
 
+module "ssm" {
+  source = "../../modules/ssm"
+
+  parameter_name = "/my-java-app/dev/cw-agent-config"
+  config_json_content = file("${path.module}/../../../cloudwatch-agent-config.json")
+}
+
 module "ec2" {
   source                    = "../../modules/ec2"
   project_name              = var.project_name
@@ -42,6 +49,7 @@ module "ec2" {
   key_pair_name             = "test-keypair"
   associate_public_ip       = true # パブリックIPを割り当てる
   iam_instance_profile_name = module.iam.instance_profile_name
+  cw_agent_config_ssm_parameter_name = module.ssm.parameter_name
 }
 
 module "rds" {

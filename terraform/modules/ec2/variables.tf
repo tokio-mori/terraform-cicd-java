@@ -43,3 +43,8 @@ variable "iam_instance_profile_name" {
   description = "IAM instance profile name"
   type = string
 }
+
+variable "cw_agent_config_ssm_parameter_name" {
+  description = "The name of the SSM parameter for the CloudWatch agent config"
+  type        = string
+}

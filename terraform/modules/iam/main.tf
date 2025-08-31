@@ -29,6 +29,25 @@ resource "aws_iam_role_policy_attachment" "ecr_read_only_attachment" {
   policy_arn = data.aws_iam_policy.ecr_read_only.arn
 }
 
+# SSMとCloudWatch Agentの権限をEC2にアタッチ
+data "aws_iam_policy" "ssm_core" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_core_attachment" {
+  role = aws_iam_role.ec2-role.name
+  policy_arn = data.aws_iam_policy.ssm_core.arn
+}
+
+data "aws_iam_policy" "cloud_watch_agent" {
+  arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "cloud_watch_agent_attachment" {
+  role = aws_iam_role.ec2-role.name
+  policy_arn = data.aws_iam_policy.cloud_watch_agent.arn
+}
+
 # --- CloudWatchへのアクセス許可 ---
 # Amazonが管理しているCloudWatch Agent用のポリシーを参照
 data "aws_iam_policy" "cloudwatch_agent_server" {
