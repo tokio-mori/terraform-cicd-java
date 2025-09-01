@@ -18,4 +18,4 @@ yum install -y amazon-cloudwatch-agent
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
     -a fetch-config \
     -m ec2 \
-    -c ssm:${var.cw_agent_config_ssm_parameter_name} -s
+    -c ssm:${ssm_param_name} -s
