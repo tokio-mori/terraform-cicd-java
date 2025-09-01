@@ -34,15 +34,16 @@
       "files": {
         "collect_list": [
           {
+            "file_path": "journald",
+            "log_group_name": "/my-java-app/ec2/system.log",
+            "log_stream_name": "{instance_id}"
+          },
+          {
             "file_path": "/var/lib/docker/containers/*/*.log",
             "log_group_name": "/my-java-app/docker/application.log",
             "log_stream_name": "{instance_id}"
           }
         ]
-      },
-      "linux_journald": {
-        "journald_log_group_name": "/my-java-app/ec2/journal.log",
-        "log_stream_name": "{instance_id}"
       }
     }
   }
