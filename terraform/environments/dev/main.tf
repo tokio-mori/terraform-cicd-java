@@ -68,3 +68,16 @@ module "rds" {
   db_port            = 3306
   multi_az           = false # 開発環境では通常false
 }
+
+module "sns" {
+  source = "../../modules/sns"
+  
+  notification_email = "tokio07181120@gmail.com"
+}
+
+module "cw_alarm" {
+  source = "../../modules/cw_alarm"
+
+  alarm_sns_topic_arn = module.sns.topic_arn
+  ec2_instance_id = module.ec2.instance_id
+}
