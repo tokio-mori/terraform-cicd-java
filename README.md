@@ -1,6 +1,3 @@
-AWS(Terraform) + Java(Spring Boot) + CI/CD 個人プロジェクト
-
----
 
 ## 1. プロジェクト概要
 Terraformを使用してAWS上にインフラを構築し、GitHub Actionsを用いてJava (Spring Boot) アプリケーションのCI/CDパイプラインを自動化するプロジェクトです。
