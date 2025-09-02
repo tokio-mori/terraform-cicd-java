@@ -3,83 +3,72 @@ AWS(Terraform) + Java(Spring Boot) + CI/CD 個人プロジェクト
 ---
 
 ## 1. プロジェクト概要
-このプロジェクトは、TerraformでAWS環境を構築し、Java(Spring Boot)アプリケーションをデプロイするサンプル構成です。
-商用運用を想定し、監視・セキュリティ・SLO/SLIの設計も含みます。
+Terraformを使用してAWS上にインフラを構築し、GitHub Actionsを用いてJava (Spring Boot) アプリケーションのCI/CDパイプラインを自動化するプロジェクトです。
 
 ---
 
 ## 2. アーキテクチャ図
-（後で貼る欄）
-![architecture-diagram](docs/architecture.png)
+<img width="935" height="375" alt="image" src="https://github.com/user-attachments/assets/fddde2aa-90c8-427e-af67-4216fa865f08" />
 
 ---
 
-## 3. インフラ構成
-- VPC / Public Subnet / IGW / Route Table
-- EC2 または ECS
-- RDS（MySQL または PostgreSQL）
-- ALB（必要に応じて）
-- IAM（最小権限）
-- CloudWatch（メトリクス・ログ）
+## 3. インフラ構成 (Infrastructure as Code)
+- コンピューティング
+  - Amazon EC2: アプリケーションのDockerコンテナを実行する仮想サーバー(t3.micro)。Elastic IPによってパブリックIPアドレスが固定されています。
+  - EC2 ユーザーデータ: インスタンスの初回起動時に、DockerとCloudWatch Agentを自動でインストール・設定します。
+
+- データベース
+  - Amazon RDS for MySQL: アプリケーションが使用するマネージドなリレーショナルデータベース(db.t3.micro)。
+
+- コンテナ
+  - Amazon ECR: ビルドされたDockerイメージを保存・管理するためのプライベートなコンテナレジストリ。
+
+- ネットワーク & セキュリティ
+  - Security Group
+    - app-sg: EC2インスタンス用。Webアクセス(8080)とSSH(22)のインバウンド通信を許可します。
+    - rds-mysql-sg: RDSインスタンス用。app-sgからのMySQL(3306)通信のみを許可する最小権限の原則に基づいています。
+
+  - IAM (Identity and Access Management)
+    - OIDC連携用ロール: GitHub ActionsがアクセスキーなしでAWSリソース（ECRなど）を操作するための権限を提供します。
+    - EC2用ロール: EC2インスタンスがECRからのイメージプル、SSMからの設定読み取り、CloudWatchへのログ書き込みを行うための権限を提供します。
+
+- 監視 & アラート
+  - Amazon CloudWatch
+    - Logs: EC2のシステムログと、Dockerコンテナから出力されるアプリケーションログを一元的に収集・監視します。
+    - Metrics: EC2のCPU、メモリ、ディスク使用率などのメトリクスを収集します。
+    - Alarms: CPU使用率がしきい値を超えた場合にアラームを発報します。
+  - Amazon SNS: CloudWatchアラームからの通知を受け取り、指定されたEメールアドレスにアラートを送信します。
+
+- 設定管理
+  - AWS Systems Manager (SSM) Parameter Store: CloudWatch Agentの設定ファイルをJSON形式で一元管理します。
 
 ---
 
-## 4. デプロイフロー
-1. GitHub Actionsでビルド
-2. アーティファクト作成
-3. AWSへ自動デプロイ
-4. 環境毎の変数管理
+## 4. デプロイフロー(CI/CD)
+GitHub Actionsを利用して、mainブランチへのプッシュをトリガーにCI/CDパイプラインを自動実行します。
 
----
+- 開発者のアクション (git push)
+  - 開発者がローカルで変更したコードをmainブランチにプッシュします。
 
-## 5. SLO / SLI
-> 値は後で確定
+- CI (品質チェック) - java-ci.yml
+  - ソースコードのチェックアウト、Java環境のセットアップが行われます。
+  - ./gradlew testで単体テストが実行され、コードの品質が保証されます。
+  - ./gradlew buildでアプリケーションがビルドされ、静的解析ツール(SonarQube)が実行されます。
+  - CIが成功すると、.jarファイルをアーティファクトにアップロードされます。
 
-| 指標 | ターゲット (SLO) | 実測値 (SLI) | 備考 |
-|------|----------------|-------------|------|
-| 可用性 | 99.9% | TBD | HTTP 200 応答率 |
-| p95 レイテンシ | < 300ms | TBD | ALB / CloudWatch |
-| 5xx エラー率 | < 1% / 5分 | TBD | ALB / CloudWatch Logs |
-| CPU 利用率 | < 70% | TBD | EC2/ECS メトリクス |
+- CD (ビルド & デプロイ) - java-cd.yml
+  - CIワークフローの成功をトリガーにCDワークフローが開始されます。
+  - AWS認証: OIDC連携を使い、IAMロールを引き受けることで、AWSの一時的な認証情報を取得します。
 
----
+  - Dockerイメージのビルド & プッシュ
+    - ソースコードから本番用のDockerイメージをビルドします。
+    - コミットハッシュをタグとしてイメージをECRにプッシュします。
 
-## 6. Runbook（雛形）
+  - EC2へのデプロイ
+    - GitHub Secretsに保存された秘密鍵とElastic IPを使い、EC2インスタンスにSSH接続します。
+    - EC2インスタンス上で以下のデプロイスクリプトが実行されます。
 
-### Runbook 1：高負荷時の対応
-**想定事象**：CPU 使用率 > 80% が5分以上継続  
-**対応手順**：
-1. CloudWatchで該当メトリクスを確認
-2. 負荷原因プロセスを特定
-3. スケールアウト/スケールアップ判断
-4. 事後記録（Postmortem）作成
-
----
-
-### Runbook 2：DB接続枯渇時
-**想定事象**：DB接続数が最大値に達し、アプリエラーが発生  
-**対応手順**：
-1. CloudWatch/RDSメトリクスで接続数確認
-2. アプリ接続プール設定見直し
-3. 一時的な最大接続数拡張（必要時のみ）
-4. 原因SQLやトランザクションを調査
-
----
-
-### Runbook 3：デプロイ失敗時
-**想定事象**：CI/CDパイプラインが失敗、またはアプリが起動しない  
-**対応手順**：
-1. GitHub Actionsログ確認
-2. 最新安定版へロールバック
-3. 変更差分のコードレビュー
-4. 恒久対策チケット化
-
----
-
-## 7. コスト
-- 想定月額コスト（TBD）
-- Cost Explorerで監視
-- Budgetsでアラート設定
-
----
-test
+  - ECRにログイン
+    - ECRから最新のDockerイメージをプル。
+    - 稼働中の古いコンテナを停止・削除 (docker stop/rm)。
+    - 最新のイメージで新しいコンテナを起動 (docker run)。この際、GitHub Secretsから渡されたRDSの接続情報が環境変数としてコンテナに注入されます。
