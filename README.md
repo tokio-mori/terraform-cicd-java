@@ -4,7 +4,7 @@ Terraformを使用してAWS上にインフラを構築し、GitHub Actionsを用
 
 ---
 
-## 2. アーキテクチャ図
+## 2. アーキテクチャ
 <img width="935" height="375" alt="image" src="https://github.com/user-attachments/assets/fddde2aa-90c8-427e-af67-4216fa865f08" />
 
 ---
